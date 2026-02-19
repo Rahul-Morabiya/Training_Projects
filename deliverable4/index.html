@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Modularized Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="page-header">
+  <h1>Modularized Quiz</h1>
+</header>
+
+<main class="container">
+
+  <section id="quiz-selection">
+    <h2>Select a Quiz</h2>
+    <div id="quiz-buttons" class="quiz-grid"></div>
+  </section>
+
+  <section id="quiz-section" class="hidden">
+
+    <div class="quiz-top">
+      <div>⏳ <span id="time">30</span>s</div>
+      <div id="score-display">⭐ 0</div>
+    </div>
+
+    <div id="question" class="question"></div>
+    <div id="options" class="options"></div>
+
+    <div class="controls">
+      <button id="next-btn" class="primary" disabled>Next</button>
+      <button id="end-btn" class="danger">End</button>
+    </div>
+
+    <div class="progress">
+      <div id="progress-bar"></div>
+    </div>
+
+  </section>
+
+  <section id="result-section" class="hidden">
+    <h2>Quiz Complete 🎉</h2>
+    <p id="result-text"></p>
+    <p id="high-score-text"></p>
+    <button id="restart-btn" class="primary">Back to Menu</button>
+  </section>
+
+</main>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
