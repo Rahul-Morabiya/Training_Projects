@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="src/styles.css">
+</head>
+<body>
+    <header class="header">
+        <h1>Weather Application</h1>
+    </header>
+
+    <main class="container">
+        <section class="search-section" aria-labelledby="search-heading">
+            <h2 id="search-heading">Search City</h2>
+
+            <form id="weather-form" class="search-form" aria-label="Weather search form">
+                <label for="city-input" class="visually-hidden">City name</label>
+                <input type="text" id="city-input" placeholder="Enter City" required aria-required="true">
+                <button type="submit">Search</button>
+            </form>
+        </section>
+
+        <section id="status" aria-live="polite"></section>
+    
+        <section id="weather-result" class="weather-card" hidden></section>
+    </main>
+
+    <footer class="site-footer">
+        <p>© Weather App by Rahul</p>
+    </footer>
+
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>
