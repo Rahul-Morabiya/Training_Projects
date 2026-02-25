@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie App</title>
+    <link rel="stylesheet" href="src/styles.css">
+</head>
+<body>
+    <header class="header">
+        <h1>Movie Search Application</h1>
+    </header>
+
+    <main class="container">
+        <section class="search-section">
+            <input id="searchInput" type="text" placeholder="Search movies..." aria-label="Search movies">
+        </section>
+
+        <section id="recentSearches" class="recent"></section>
+    
+        <section id="movieGrid" class="grid"></section>
+
+        <section class="pagination">
+            <button id="prevBtn" class="paginationBtn">Prev</button>
+            <span id="pageInfo"></span>
+            <button id="nextBtn" class="paginationBtn">Next</button>
+        </section>
+
+        <p id="status" class="status"></p>
+    </main>
+
+
+    <script type="module" src="src/app.js"></script>
+</body>
+</html>
