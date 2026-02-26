@@ -1,5 +1,5 @@
 # 📘 Training_Projects  
-This repository contains all projects developed during my **Intuitive Internship Training**, showcasing my progress from frontend fundamentals to async applications and performance optimization.
+This repository contains all projects developed during my **Intuitive Internship Training**, showcasing my progress in fullstack application development.
 
 ---
 
