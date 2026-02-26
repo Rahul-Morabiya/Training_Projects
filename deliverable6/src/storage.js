@@ -5,5 +5,5 @@ export const saveSearch = (query) => {
 }
 
 export const getSearches=()=>{
-    JSON.parse(localStorage.getItem("recent")) || [];
+    return JSON.parse(localStorage.getItem("recent")) || [];
 }

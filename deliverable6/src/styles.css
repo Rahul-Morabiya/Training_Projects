@@ -63,3 +63,28 @@ body {
     background-color:aqua;
     color:white;
 }
+
+.recent{
+    display:flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: start;
+
+    margin-top:1rem;
+    margin-bottom:3rem;
+}
+#recentHeader{
+
+}
+.recent button{
+    min-width: 10rem;
+    width:auto;
+}
+.recent button:hover{
+    color:goldenrod;
+    transform: scale(108%);
+}
+
+.hidden{
+    display:none;
+}

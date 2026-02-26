@@ -16,17 +16,22 @@
             <input id="searchInput" type="text" placeholder="Search movies..." aria-label="Search movies">
         </section>
 
-        <section id="recentSearches" class="recent"></section>
-    
+        <section id="recentSearches" class="recent"><span id="recentHeader"></span></section>
+        
+        <section class="statusSection">
+           <p id="status" class="status"></p> 
+        </section>
+
         <section id="movieGrid" class="grid"></section>
 
-        <section class="pagination">
+        <section class="pagination hidden" id="pagination">
             <button id="prevBtn" class="paginationBtn">Prev</button>
             <span id="pageInfo"></span>
             <button id="nextBtn" class="paginationBtn">Next</button>
         </section>
 
-        <p id="status" class="status"></p>
+        
+        
     </main>
 
 
