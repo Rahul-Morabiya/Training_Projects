@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo Application</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="app-header">
+        <h1>Todo Manager</h1>
+    </header>
+
+    <main>
+        <section aria-labelledby="add-heading">
+            <h2 id="add-heading" class="visually-hidden">Add Todo</h2>
+
+            <form action="" id="todo-form">
+                <label for="todo-input">
+                    New Task
+                </label>
+                <div class="input-row">
+                    <input type="text" id="todo-input" name="todo" placeholder="Add your next Task" required aria-required="true"/>
+                    <button type="submit">Add</button>
+                </div>
+            </form>
+        </section>
+
+        <section aria-labelledby="tasks-heading">
+            <h2 id="tasks-heading">Tasks</h2>
+            <ul id="todo-list" aria-live="polite" aria-relevant="additions removal"></ul>
+        </section>
+
+        <section aria-labelledby="controls-heading">
+            <h2 id="controls-heading" class="visually-hidden">
+                Controls
+            </h2>
+
+            <div class="filters" role="group" aria-label="Filter Tasks">
+                <button data-filter="all" aria-pressed="true">All</button>
+                <button data-filter="active" aria-pressed="false">Active</button>
+                <button data-filter="completed" aria-pressed="false">Completed</button>
+            </div>
+            <button id="clear-btn">Clear Completed</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>Todo Application by Rahul@2026</p>
+    </footer>
+
+    <script src="../dist/ui.js" type="module"></script>
+</body>
+</html>
