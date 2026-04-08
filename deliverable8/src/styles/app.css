@@ -1,4 +1,4 @@
-/* ===== Global ===== */
+
 body {
   margin: 0;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -6,7 +6,7 @@ body {
   height: 100vh;
 }
 
-/* ===== Layout ===== */
+
 .container {
   height: 100vh;
   display: flex;
@@ -14,7 +14,6 @@ body {
   align-items: center;
 }
 
-/* ===== Card (Glassmorphism) ===== */
 .card {
   backdrop-filter: blur(12px);
   background: rgba(255, 255, 255, 0.6);
@@ -26,7 +25,6 @@ body {
   animation: fadeIn 0.6s ease;
 }
 
-/* ===== Header ===== */
 .header {
   display: flex;
   justify-content: space-between;
@@ -39,7 +37,6 @@ body {
   color: #1e293b;
 }
 
-/* ===== Controls ===== */
 .controls {
   margin: 12px 0;
 }
@@ -59,14 +56,12 @@ body {
   border-color: #6366f1;
 }
 
-/* ===== Status ===== */
 .status {
   margin: 10px 0;
   font-weight: 500;
   color: #334155;
 }
 
-/* ===== Board ===== */
 .board {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -74,7 +69,6 @@ body {
   margin-top: 10px;
 }
 
-/* ===== Squares ===== */
 .square {
   height: 85px;
   border-radius: 16px;
@@ -99,7 +93,6 @@ body {
   transform: scale(0.95);
 }
 
-/* ===== Marks ===== */
 .mark {
   font-size: 32px;
   font-weight: bold;
@@ -114,7 +107,6 @@ body {
   color: #ef4444;
 }
 
-/* ===== Buttons ===== */
 .btn {
   padding: 10px 16px;
   border: none;
@@ -143,7 +135,6 @@ body {
   background: #d1d5db;
 }
 
-/* ===== Badge ===== */
 .badge {
   background: linear-gradient(135deg, #bbf7d0, #86efac);
   color: #065f46;
@@ -153,7 +144,6 @@ body {
   font-weight: 600;
 }
 
-/* ===== Scoreboard ===== */
 .scoreboard {
   display: flex;
   justify-content: space-between;
@@ -165,14 +155,12 @@ body {
   color: #1e293b;
 }
 
-/* ===== Actions ===== */
 .actions {
   margin-top: 15px;
   display: flex;
   gap: 10px;
 }
 
-/* ===== Animations ===== */
 @keyframes fadeIn {
   from {
     opacity: 0;

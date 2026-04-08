@@ -4,11 +4,7 @@ import { Button } from "./components/Button";
 import { Card } from "./components/Card";
 import { Badge } from "./components/Badge";
 import { Select } from "./components/Select";
-import {
-  getBestMoveHard,
-  getBestMoveMedium,
-  getRandomMove,
-} from "./utils/ai";
+import {getBestMoveHard,getBestMoveMedium,getRandomMove} from "./utils/ai";
 import { loadScore, saveScore } from "./utils/storage";
 import "./styles/app.css";
 

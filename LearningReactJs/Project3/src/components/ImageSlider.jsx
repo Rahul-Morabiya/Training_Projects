@@ -7,12 +7,13 @@ const ImageSlider = ({ url, limit, page = 1 }) => {
   const [errorMsg, setErrorMsg] = useState(null);
   const [loading, setLoading] = useState(false);
 
-    function handleNext(){
-        setCurrentSlide(currentSlide+1);
-    }
-    function handlePrevious(){
-        setCurrentSlide(currentSlide-1);
-    }
+  function handleNext() {
+    setCurrentSlide((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  }
+
+  function handlePrevious() {
+    setCurrentSlide((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  }
 
   async function fetchImages(getUrl) {
     try {
@@ -34,7 +35,7 @@ const ImageSlider = ({ url, limit, page = 1 }) => {
   useEffect(() => {
     if (url !== "") fetchImages(url);
     console.log(images);
-  }, [url,page,limit]);
+  }, [url, page, limit]);
 
   if (loading) {
     return <div>Loading Data</div>;
@@ -56,21 +57,41 @@ const ImageSlider = ({ url, limit, page = 1 }) => {
       }}
     >
       (
-        <div
-          className="item"
-          key={idx}
-          style={{
-            display: "flex",
-            height: "50px",
-            width: "50px",
-          }}
-        >
-          <img src={images[currentSlide].download_url} alt="" />
-        </div>
+      <div
+        className="item"
+        style={{
+          display: "flex",
+          height: "50px",
+          width: "50px",
+        }}
+      >
+        <img src={images[currentSlide]?.download_url} alt="" />
+      </div>
       )
-      <button className="" style={{color:'white',background:'orange',height:'20px',width:'40px'}} onClick={handlePrevious()}>Previous</button>
-      <button className="" style={{color:'white',background:'orange',height:'20px',width:'40px'}} onClick={handleNext()}>Next</button>
-      
+      <button
+        className=""
+        style={{
+          color: "white",
+          background: "orange",
+          height: "20px",
+          width: "40px",
+        }}
+        onClick={handlePrevious}
+      >
+        Previous
+      </button>
+      <button
+        className=""
+        style={{
+          color: "white",
+          background: "orange",
+          height: "20px",
+          width: "40px",
+        }}
+        onClick={handleNext}
+      >
+        Next
+      </button>
     </div>
   );
 };
