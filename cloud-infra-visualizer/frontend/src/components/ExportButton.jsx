@@ -14,7 +14,23 @@ const ExportButton = () => {
     link.click();
   };
 
-  return <button onClick={exportImage}>Export PNG</button>;
+  return (
+    <button
+      onClick={exportImage}
+      style={{
+        margin: 10,
+        padding: "8px 14px",
+        background: "#2563eb",
+        border: "none",
+        color: "white",
+        borderRadius: 6,
+        cursor: "pointer",
+        fontWeight: 500
+      }}
+    >
+      Export PNG
+    </button>
+  );
 };
 
 export default ExportButton;

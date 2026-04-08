@@ -1,17 +1,19 @@
 export const buildGraph = (regionsData) => {
+  console.log("🔥 NEW GRAPH BUILDER LOADED");
+
   const nodes = [];
   const edges = [];
 
-  let edgeCounter = 0; // ✅ GLOBAL COUNTER
+  let edgeCounter = 0;
 
-  const createEdge = (source, target, label = "") => ({
-    id: `edge-${edgeCounter++}`, // ✅ ALWAYS UNIQUE
+  const createEdge = (source, target) => ({
+    id: `edge-${edgeCounter++}`,
     source,
     target,
-    label
+    style: { stroke: "#555" }
   });
 
-  const nodeSet = new Set(); // ✅ avoid duplicate nodes
+  const nodeSet = new Set();
 
   const addNode = (node) => {
     if (!nodeSet.has(node.id)) {
@@ -25,127 +27,143 @@ export const buildGraph = (regionsData) => {
 
     const regionId = `region-${region}`;
 
+    // 🌍 REGION
     addNode({
       id: regionId,
       type: "region",
-      data: { label: region },
+      data: {
+        label: region,
+        region
+      },
       position: { x: 0, y: 0 }
     });
 
-    // VPC
+    // 🌐 VPC
     vpcs?.forEach((vpc) => {
       const vpcId = `vpc-${vpc.VpcId}`;
 
       addNode({
         id: vpcId,
         type: "vpc",
-        data: { label: vpc.VpcId },
+        data: {
+          label: vpc.VpcId,
+          region,
+          cidr: vpc.CidrBlock,
+          state: vpc.State
+        },
         position: { x: 0, y: 0 }
       });
 
-      edges.push(createEdge(regionId, vpcId, "contains"));
+      edges.push(createEdge(regionId, vpcId));
     });
 
-    // Subnet
+    // 📦 SUBNET
     subnets?.forEach((subnet) => {
       const subnetId = `subnet-${subnet.SubnetId}`;
-      const vpcId = `vpc-${subnet.VpcId}`;
 
       addNode({
         id: subnetId,
         type: "subnet",
-        data: { label: subnet.SubnetId },
+        data: {
+          label: subnet.SubnetId,
+          region,
+          cidr: subnet.CidrBlock,
+          az: subnet.AvailabilityZone
+        },
         position: { x: 0, y: 0 }
       });
 
-      edges.push(createEdge(vpcId, subnetId, "contains"));
+      edges.push(createEdge(`vpc-${subnet.VpcId}`, subnetId));
     });
 
-    // Security Groups
+    // 🛡️ SECURITY GROUP
     securityGroups?.forEach((sg) => {
       const sgId = `sg-${sg.GroupId}`;
-      const vpcId = `vpc-${sg.VpcId}`;
 
       addNode({
         id: sgId,
         type: "sg",
-        data: { label: sg.GroupName },
+        data: {
+          label: sg.GroupName,
+          region,
+          description: sg.Description
+        },
         position: { x: 0, y: 0 }
       });
 
-      edges.push(createEdge(vpcId, sgId, "has-sg"));
+      edges.push(createEdge(`vpc-${sg.VpcId}`, sgId));
     });
 
-    // EC2
+    // 🖥️ EC2
     ec2?.forEach((reservation) => {
       reservation.Instances?.forEach((instance) => {
         const ec2Id = `ec2-${instance.InstanceId}`;
 
+        console.log("🧪 EC2 NODE:", {
+          id: instance.InstanceId,
+          type: instance.InstanceType
+        });
+
         addNode({
           id: ec2Id,
           type: "ec2",
-          data: { label: instance.InstanceId },
+          data: {
+            label: instance.InstanceId,
+            region,
+            state: instance.State?.Name,
+            instanceType: instance.InstanceType,
+            privateIp: instance.PrivateIpAddress
+          },
           position: { x: 0, y: 0 }
         });
 
         if (instance.SubnetId) {
-          edges.push(
-            createEdge(
-              `subnet-${instance.SubnetId}`,
-              ec2Id,
-              "hosts"
-            )
-          );
+          edges.push(createEdge(`subnet-${instance.SubnetId}`, ec2Id));
         }
-
-        instance.SecurityGroups?.forEach((sg) => {
-          edges.push(
-            createEdge(
-              ec2Id,
-              `sg-${sg.GroupId}`,
-              "secured-by"
-            )
-          );
-        });
       });
     });
 
-    // RDS
+    // 🗄️ RDS
     rds?.forEach((db) => {
       const rdsId = `rds-${db.DBInstanceIdentifier}`;
 
       addNode({
         id: rdsId,
         type: "rds",
-        data: { label: db.DBInstanceIdentifier },
+        data: {
+          label: db.DBInstanceIdentifier,
+          region,
+          engine: db.Engine,
+          status: db.DBInstanceStatus
+        },
         position: { x: 0, y: 0 }
       });
 
       db.DBSubnetGroup?.Subnets?.forEach((subnet) => {
-        edges.push(
-          createEdge(
-            `subnet-${subnet.SubnetIdentifier}`,
-            rdsId,
-            "hosts"
-          )
-        );
+        edges.push(createEdge(`subnet-${subnet.SubnetIdentifier}`, rdsId));
       });
     });
 
-    // S3
+    // 🪣 S3
     s3?.forEach((bucket) => {
       const s3Id = `s3-${bucket.Name}`;
 
       addNode({
         id: s3Id,
         type: "s3",
-        data: { label: bucket.Name },
+        data: {
+          label: bucket.Name,
+          region,
+          created: bucket.CreationDate
+        },
         position: { x: 0, y: 0 }
       });
 
-      edges.push(createEdge(regionId, s3Id, "contains"));
+      edges.push(createEdge(regionId, s3Id));
     });
   });
+
+  // console.log("🧠 GRAPH NODES:", nodes);
 
   return { nodes, edges };
 };

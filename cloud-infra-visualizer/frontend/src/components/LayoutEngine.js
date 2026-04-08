@@ -4,22 +4,45 @@ export const applyLayout = (nodes, edges, layout) => {
 
   if (layout === "dag") {
     const g = new dagre.graphlib.Graph();
-    g.setGraph({ rankdir: "TB" });
+
+    // ✅ TOP → BOTTOM layout (KEY FIX)
+    g.setGraph({
+      rankdir: "TB",
+      nodesep: 80,
+      ranksep: 120
+    });
+
     g.setDefaultEdgeLabel(() => ({}));
 
-    nodes.forEach(n => g.setNode(n.id, { width: 180, height: 80 }));
-    edges.forEach(e => g.setEdge(e.source, e.target));
+    nodes.forEach((n) =>
+      g.setNode(n.id, { width: 150, height: 70 })
+    );
+
+    edges.forEach((e) =>
+      g.setEdge(e.source, e.target)
+    );
 
     dagre.layout(g);
 
-    return nodes.map(n => {
+    return nodes.map((n) => {
       const pos = g.node(n.id);
-      return { ...n, position: { x: pos.x, y: pos.y } };
+
+      return {
+        ...n,
+        position: {
+          x: pos.x - 75,   // center correction
+          y: pos.y - 35
+        }
+      };
     });
   }
 
-  return nodes.map(n => ({
+  // fallback random
+  return nodes.map((n) => ({
     ...n,
-    position: { x: Math.random() * 800, y: Math.random() * 600 }
+    position: {
+      x: Math.random() * 600,
+      y: Math.random() * 400
+    }
   }));
 };

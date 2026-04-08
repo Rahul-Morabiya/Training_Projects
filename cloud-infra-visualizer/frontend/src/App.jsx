@@ -3,7 +3,6 @@ import { fetchGraph } from "./api";
 import GraphView from "./components/GraphView";
 import ControlsPanel from "./components/ControlsPanel";
 import NodeDetails from "./components/NodeDetails";
-import ExportButton from "./components/ExportButton";
 import { useGraphFilter } from "./hooks/useGraphFilter";
 import { applyLayout } from "./components/LayoutEngine";
 
@@ -20,6 +19,9 @@ function App() {
 
   useEffect(() => {
     fetchGraph().then(data => {
+      // 🔥 DEBUG LOG
+      console.log("🌐 FRONTEND RECEIVED:", data);
+
       setNodes(data.nodes);
       setEdges(data.edges);
     });
@@ -51,8 +53,6 @@ function App() {
         setSearch={setSearch}
         setRegion={setRegion}
       />
-
-      <ExportButton />
 
       <GraphView
         nodes={layoutedNodes}
