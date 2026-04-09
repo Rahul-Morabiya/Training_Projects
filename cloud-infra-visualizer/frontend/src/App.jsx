@@ -3,6 +3,8 @@ import { fetchGraph } from "./api";
 import GraphView from "./components/GraphView";
 import ControlsPanel from "./components/ControlsPanel";
 import NodeDetails from "./components/NodeDetails";
+import ResourceListView from "./components/ResourceListView";
+import ArchitectureView from "./components/ArchitectureView"; // 🔥 NEW
 import { useGraphFilter } from "./hooks/useGraphFilter";
 import { applyLayout } from "./components/LayoutEngine";
 
@@ -17,11 +19,11 @@ function App() {
 
   const [selectedNode, setSelectedNode] = useState(null);
 
+  // 🔥 UPDATED
+  const [view, setView] = useState("graph"); // graph | list | architecture
+
   useEffect(() => {
     fetchGraph().then(data => {
-      // 🔥 DEBUG LOG
-      console.log("🌐 FRONTEND RECEIVED:", data);
-
       setNodes(data.nodes);
       setEdges(data.edges);
     });
@@ -40,8 +42,10 @@ function App() {
     ids.has(e.source) && ids.has(e.target)
   );
 
-  const layoutedNodes = applyLayout(regionNodes, regionEdges, layout);
-
+const layoutedNodes =
+  layout === "dag"
+    ? applyLayout(regionNodes, regionEdges, layout)
+    : regionNodes;
   return (
     <>
       <ControlsPanel
@@ -52,13 +56,37 @@ function App() {
         search={search}
         setSearch={setSearch}
         setRegion={setRegion}
+        view={view}
+        setView={setView}
       />
 
-      <GraphView
-        nodes={layoutedNodes}
-        edges={regionEdges}
-        onNodeClick={setSelectedNode}
-      />
+      {/* 🔥 VIEW SWITCH */}
+      {view === "graph" && (
+        <GraphView
+          nodes={layoutedNodes}
+          edges={regionEdges}
+          onNodeClick={setSelectedNode}
+          selectedNode={selectedNode}
+        />
+      )}
+
+      {view === "list" && (
+        <ResourceListView
+          nodes={nodes}
+          filters={filters}
+          search={search}
+          region={region}
+          onNodeClick={setSelectedNode}
+        />
+      )}
+
+      {view === "architecture" && (
+        <ArchitectureView
+          nodes={nodes}
+          edges={edges}
+          onNodeClick={setSelectedNode}
+        />
+      )}
 
       <NodeDetails
         node={selectedNode}

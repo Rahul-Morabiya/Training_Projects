@@ -8,8 +8,8 @@ export const applyLayout = (nodes, edges, layout) => {
     // ✅ TOP → BOTTOM layout (KEY FIX)
     g.setGraph({
       rankdir: "TB",
-      nodesep: 80,
-      ranksep: 120
+      nodesep: 120,
+      ranksep: 180
     });
 
     g.setDefaultEdgeLabel(() => ({}));

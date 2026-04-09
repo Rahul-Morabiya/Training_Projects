@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo } from "react";
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -7,92 +7,136 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 
-const getIcon = (type) => {
-  const icons = {
-    ec2: "🖥️",
-    rds: "🗄️",
-    s3: "🪣",
-    vpc: "🌐",
-    subnet: "📦",
-    sg: "🛡️",
-    region: "🌍"
-  };
-  return icons[type] || "⚪";
+import AwsNode from "./AwsNode"; // ✅ IMPORT
+
+// ✅ REGISTER CUSTOM NODE
+const nodeTypes = {
+  aws: AwsNode
 };
 
-const typeColors = {
-  ec2: "#ff9900",
-  rds: "#3b82f6",
-  s3: "#22c55e",
-  vpc: "#a855f7",
-  subnet: "#06b6d4",
-  sg: "#f43f5e",
-  region: "#eab308"
-};
+const FlowContent = ({ nodes, edges, onNodeClick, selectedNode }) => {
 
-const FlowContent = ({ nodes, edges, onNodeClick }) => {
+  const connected = useMemo(() => {
+    if (!selectedNode) return new Set();
 
-  const styledNodes = nodes.map((n) => ({
-    ...n,
-    type: "default",
+    const set = new Set([selectedNode.id]);
+    const stack = [selectedNode.id];
 
-    // ✅ KEEP ORIGINAL DATA + ADD UI LABEL
-    data: {
-      ...n.data,  // 🔥 CRITICAL FIX
-      label: (
-        <div
-          style={{
-            background: "#1e1e2f",
-            border: `1px solid ${typeColors[n.type] || "#333"}`,
-            borderRadius: 10,
-            padding: 6,
-            width: 110,
-            textAlign: "center",
-            color: "white",
-            cursor: "pointer"
-          }}
-        >
-          <div style={{ fontSize: 18 }}>
-            {getIcon(n.type)}
-          </div>
+    while (stack.length) {
+      const curr = stack.pop();
 
-          <div
-            style={{
-              fontSize: 9,
-              fontWeight: 600,
-              wordBreak: "break-all"
-            }}
-          >
-            {n.data.label}
-          </div>
-        </div>
-      )
+      edges.forEach(e => {
+        if (e.source === curr && !set.has(e.target)) {
+          set.add(e.target);
+          stack.push(e.target);
+        }
+        if (e.target === curr && !set.has(e.source)) {
+          set.add(e.source);
+          stack.push(e.source);
+        }
+      });
     }
-  }));
+
+    return set;
+  }, [selectedNode, edges]);
+
+  // ✅ ONLY CHANGE HERE
+  const styledNodes = nodes.map(n => {
+    const isConnected = connected.has(n.id);
+
+    return {
+  ...n,
+  type: "aws",
+  draggable: true, // 🔥 ADD THIS
+  data: {
+    ...n.data,
+    type: n.type
+  },
+  style: {
+    opacity: selectedNode
+      ? (isConnected ? 1 : 0.15)
+      : 1
+  }
+};
+  });
+
+  // ❗ EDGES UNCHANGED (AS YOU ASKED)
+  const styledEdges = edges.map((e, index) => {
+  const isActive =
+    selectedNode &&
+    (e.source === selectedNode.id || e.target === selectedNode.id);
+
+  // 🔥 OFFSET CALCULATION (KEY FIX)
+  const offset = (index % 3) * 14; // stagger labels
+
+  return {
+    ...e,
+    type: "default",
+    animated: true,
+
+    label: e.data?.label,
+
+    labelStyle: {
+      fill: "#e5e7eb",
+      fontSize: 10,
+      fontWeight: 500
+    },
+
+    labelBgStyle: {
+      fill: "#020617",
+      fillOpacity: 0.9,
+      rx: 4,
+      ry: 4
+    },
+
+    labelBgPadding: [6, 3],
+    labelShowBg: true,
+
+    // 🔥 KEY FIX
+    labelX: (e.labelX || 0) + offset,
+    labelY: (e.labelY || 0) + offset,
+
+    style: {
+      stroke: isActive ? "#ffffff" : "#64748b",
+      strokeWidth: isActive ? 2.5 : 1.6,
+      strokeDasharray: "8 6",
+      opacity: selectedNode ? (isActive ? 1 : 0.1) : 0.85
+    }
+  };
+});
 
   return (
-    <ReactFlow
-      nodes={styledNodes}
-      edges={edges}
-      fitView
-      style={{ background: "#0f0f1a" }}
-      onNodeClick={(e, node) => onNodeClick(node)}
-    >
-      <MiniMap />
-      <Controls />
-      <Background color="#333" gap={20} />
-    </ReactFlow>
-  );
+  <ReactFlow
+    nodes={styledNodes}
+    edges={styledEdges}
+    nodeTypes={nodeTypes}
+    fitView
+    onNodeClick={(e, node) => onNodeClick(node)}
+
+    nodesDraggable={true}
+    nodesConnectable={false}
+    elementsSelectable={true}
+
+    panOnDrag={true}
+    panOnScroll={true}
+    snapToGrid={false}
+
+    style={{ background: "#020617" }}
+  >
+    {/* 🔥 ADD THESE BACK */}
+    <MiniMap style={{ background: "#020617" }} />
+    <Controls />   {/* ✅ THIS IS YOUR MISSING UI */}
+    <Background color="#1e293b" gap={32} />
+  </ReactFlow>
+);
 };
 
-const GraphView = (props) => {
-  return (
-    <div style={{ height: "90vh", background: "#0f0f1a" }}>
-      <ReactFlowProvider>
-        <FlowContent {...props} />
-      </ReactFlowProvider>
-    </div>
-  );
-};
+const GraphView = (props) => (
+  <div style={{ height: "90vh" }}>
+    <ReactFlowProvider>
+      <FlowContent {...props} />
+    </ReactFlowProvider>
+  </div>
+);
 
 export default GraphView;

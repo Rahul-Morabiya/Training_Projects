@@ -1,3 +1,5 @@
+/* index.css */
+
 :root {
   --text: #6b6375;
   --text-h: #08060d;
@@ -49,11 +51,24 @@
     filter: invert(1) brightness(2);
   }
 }
+.react-flow__node.vpc {
+  background: rgba(99, 102, 241, 0.05);
+  border: 2px solid #6366f1;
+}
 
+.react-flow__node.subnet {
+  background: rgba(6, 182, 212, 0.05);
+  border: 1.5px dashed #06b6d4;
+}
 body {
   margin: 0;
 }
-
+.react-flow__node {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
 #root {
   width: 1126px;
   max-width: 100%;
@@ -108,4 +123,10 @@ code {
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
+}
+.react-flow__node {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }

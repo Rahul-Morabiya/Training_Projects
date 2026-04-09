@@ -4,9 +4,11 @@ const Row = ({ label, value }) => {
   if (value === undefined || value === null) return null;
 
   return (
-    <div style={{ marginBottom: 8 }}>
-      <span style={{ color: "#aaa" }}>{label}: </span>
-      <span>{String(value)}</span>
+    <div style={{ marginBottom: 10 }}>
+      <div style={{ color: "#9ca3af", fontSize: 11 }}>{label}</div>
+      <div style={{ fontSize: 13, fontWeight: 500 }}>
+        {String(value)}
+      </div>
     </div>
   );
 };
@@ -22,30 +24,41 @@ const NodeDetails = ({ node, onClose }) => {
         position: "fixed",
         right: 0,
         top: 0,
-        width: 320,
+        width: 340,
         height: "100%",
-        background: "#111827",
+        background: "#020617",
         color: "white",
-        padding: 16,
+        padding: 20,
         overflowY: "auto",
-        borderLeft: "1px solid #333",
+        borderLeft: "1px solid #1e293b",
         zIndex: 1000
       }}
     >
-      <button onClick={onClose} style={{ marginBottom: 10 }}>
+      <button
+        onClick={onClose}
+        style={{
+          marginBottom: 16,
+          padding: "6px 10px",
+          background: "#1e293b",
+          border: "none",
+          color: "white",
+          borderRadius: 6,
+          cursor: "pointer"
+        }}
+      >
         Close
       </button>
 
-      <h3 style={{ marginBottom: 10 }}>Node Details</h3>
+      <h3 style={{ marginBottom: 16 }}>Resource Details</h3>
 
       {/* 🔥 BASIC */}
       <Row label="ID" value={node.id} />
       <Row label="Type" value={node.type} />
       <Row label="Region" value={d.region} />
 
-      <hr style={{ margin: "10px 0", borderColor: "#333" }} />
+      <hr style={{ margin: "16px 0", borderColor: "#1e293b" }} />
 
-      {/* 🔥 SMART METADATA */}
+      {/* 🔥 RESOURCE SPECIFIC */}
       <Row label="Instance Type" value={d.instanceType} />
       <Row label="State" value={d.state} />
       <Row label="Private IP" value={d.privateIp} />
@@ -60,24 +73,7 @@ const NodeDetails = ({ node, onClose }) => {
 
       <Row label="Created" value={d.created} />
 
-      {/* 🔥 RAW JSON (NOW WILL WORK IF ADDED LATER) */}
-      {d.raw && (
-        <>
-          <hr style={{ margin: "10px 0", borderColor: "#333" }} />
-          <h4>Raw Data</h4>
-          <pre
-            style={{
-              fontSize: 11,
-              background: "#1f2937",
-              padding: 10,
-              borderRadius: 6,
-              overflowX: "auto"
-            }}
-          >
-            {JSON.stringify(d.raw, null, 2)}
-          </pre>
-        </>
-      )}
+      {/* ❌ REMOVED RAW DATA */}
     </div>
   );
 };

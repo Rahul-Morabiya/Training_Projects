@@ -1,17 +1,9 @@
-export const buildGraph = (regionsData) => {
-  console.log("🔥 NEW GRAPH BUILDER LOADED");
+// utils/graphBuilder.js
 
+export const buildGraph = (regionsData) => {
   const nodes = [];
   const edges = [];
-
   let edgeCounter = 0;
-
-  const createEdge = (source, target) => ({
-    id: `edge-${edgeCounter++}`,
-    source,
-    target,
-    style: { stroke: "#555" }
-  });
 
   const nodeSet = new Set();
 
@@ -22,8 +14,28 @@ export const buildGraph = (regionsData) => {
     }
   };
 
+  const createEdge = (source, target, label) => ({
+    id: `edge-${edgeCounter++}`,
+    source,
+    target,
+    label,
+    type: "step",
+    data: { label },
+    style: {
+      stroke: "#6b7280"
+    }
+  });
+
   regionsData.forEach((regionData) => {
-    const { region, ec2, vpcs, subnets, securityGroups, s3, rds } = regionData;
+    const {
+      region,
+      ec2,
+      vpcs,
+      subnets,
+      securityGroups,
+      s3,
+      rds
+    } = regionData;
 
     const regionId = `region-${region}`;
 
@@ -33,13 +45,14 @@ export const buildGraph = (regionsData) => {
       type: "region",
       data: {
         label: region,
-        region
+        region,
+        raw: regionData
       },
       position: { x: 0, y: 0 }
     });
 
     // 🌐 VPC
-    vpcs?.forEach((vpc) => {
+    vpcs.forEach((vpc) => {
       const vpcId = `vpc-${vpc.VpcId}`;
 
       addNode({
@@ -49,16 +62,17 @@ export const buildGraph = (regionsData) => {
           label: vpc.VpcId,
           region,
           cidr: vpc.CidrBlock,
-          state: vpc.State
+          state: vpc.State,
+          raw: vpc
         },
         position: { x: 0, y: 0 }
       });
 
-      edges.push(createEdge(regionId, vpcId));
+      edges.push(createEdge(regionId, vpcId, "DEPLOYED_IN"));
     });
 
     // 📦 SUBNET
-    subnets?.forEach((subnet) => {
+    subnets.forEach((subnet) => {
       const subnetId = `subnet-${subnet.SubnetId}`;
 
       addNode({
@@ -68,16 +82,19 @@ export const buildGraph = (regionsData) => {
           label: subnet.SubnetId,
           region,
           cidr: subnet.CidrBlock,
-          az: subnet.AvailabilityZone
+          az: subnet.AvailabilityZone,
+          raw: subnet
         },
         position: { x: 0, y: 0 }
       });
 
-      edges.push(createEdge(`vpc-${subnet.VpcId}`, subnetId));
+      edges.push(
+        createEdge(`vpc-${subnet.VpcId}`, subnetId, "CONTAINS")
+      );
     });
 
     // 🛡️ SECURITY GROUP
-    securityGroups?.forEach((sg) => {
+    securityGroups.forEach((sg) => {
       const sgId = `sg-${sg.GroupId}`;
 
       addNode({
@@ -86,23 +103,21 @@ export const buildGraph = (regionsData) => {
         data: {
           label: sg.GroupName,
           region,
-          description: sg.Description
+          description: sg.Description,
+          raw: sg
         },
         position: { x: 0, y: 0 }
       });
 
-      edges.push(createEdge(`vpc-${sg.VpcId}`, sgId));
+      edges.push(
+        createEdge(`vpc-${sg.VpcId}`, sgId, "SECURES")
+      );
     });
 
     // 🖥️ EC2
-    ec2?.forEach((reservation) => {
+    ec2.forEach((reservation) => {
       reservation.Instances?.forEach((instance) => {
         const ec2Id = `ec2-${instance.InstanceId}`;
-
-        console.log("🧪 EC2 NODE:", {
-          id: instance.InstanceId,
-          type: instance.InstanceType
-        });
 
         addNode({
           id: ec2Id,
@@ -112,19 +127,38 @@ export const buildGraph = (regionsData) => {
             region,
             state: instance.State?.Name,
             instanceType: instance.InstanceType,
-            privateIp: instance.PrivateIpAddress
+            privateIp: instance.PrivateIpAddress,
+            raw: instance
           },
           position: { x: 0, y: 0 }
         });
 
+        // Subnet → EC2
         if (instance.SubnetId) {
-          edges.push(createEdge(`subnet-${instance.SubnetId}`, ec2Id));
+          edges.push(
+            createEdge(
+              `subnet-${instance.SubnetId}`,
+              ec2Id,
+              "HOSTS"
+            )
+          );
         }
+
+        // EC2 → SG (🔥 NEW)
+        instance.SecurityGroups?.forEach((sg) => {
+          edges.push(
+            createEdge(
+              ec2Id,
+              `sg-${sg.GroupId}`,
+              "SECURED_BY"
+            )
+          );
+        });
       });
     });
 
     // 🗄️ RDS
-    rds?.forEach((db) => {
+    rds.forEach((db) => {
       const rdsId = `rds-${db.DBInstanceIdentifier}`;
 
       addNode({
@@ -134,18 +168,37 @@ export const buildGraph = (regionsData) => {
           label: db.DBInstanceIdentifier,
           region,
           engine: db.Engine,
-          status: db.DBInstanceStatus
+          status: db.DBInstanceStatus,
+          raw: db
         },
         position: { x: 0, y: 0 }
       });
 
+      // Subnet → RDS
       db.DBSubnetGroup?.Subnets?.forEach((subnet) => {
-        edges.push(createEdge(`subnet-${subnet.SubnetIdentifier}`, rdsId));
+        edges.push(
+          createEdge(
+            `subnet-${subnet.SubnetIdentifier}`,
+            rdsId,
+            "DEPLOYED_IN"
+          )
+        );
       });
+
+      // VPC → RDS (🔥 NEW)
+      if (db.DBSubnetGroup?.VpcId) {
+        edges.push(
+          createEdge(
+            `vpc-${db.DBSubnetGroup.VpcId}`,
+            rdsId,
+            "CONTAINS_DB"
+          )
+        );
+      }
     });
 
     // 🪣 S3
-    s3?.forEach((bucket) => {
+    s3.forEach((bucket) => {
       const s3Id = `s3-${bucket.Name}`;
 
       addNode({
@@ -154,16 +207,15 @@ export const buildGraph = (regionsData) => {
         data: {
           label: bucket.Name,
           region,
-          created: bucket.CreationDate
+          created: bucket.CreationDate,
+          raw: bucket
         },
         position: { x: 0, y: 0 }
       });
 
-      edges.push(createEdge(regionId, s3Id));
+      edges.push(createEdge(regionId, s3Id, "GLOBAL_RESOURCE"));
     });
   });
-
-  // console.log("🧠 GRAPH NODES:", nodes);
 
   return { nodes, edges };
 };
