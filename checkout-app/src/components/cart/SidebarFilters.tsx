@@ -11,22 +11,29 @@ export default function SidebarFilters({
   view,
   setView,
 }: any) {
+  const views = [
+    { key: "grid", label: "Grid" },
+    { key: "compact", label: "Compact" },
+    { key: "list", label: "List" },
+  ];
+
   return (
     <div className="card space-y-5">
 
       {/* VIEW SWITCH */}
       <div>
         <div className="text-sm mb-2 font-medium">View</div>
-        <div className="flex gap-2 ">
-          {["grid", "compact", "list"].map((v) => (
+
+        <div className="flex gap-2">
+          {views.map((v) => (
             <button
-              key={v}
-              onClick={() => setView(v)}
+              key={v.key}
+              onClick={() => setView(v.key)}   // ✅ FIXED
               className={`flex-1 ${
-                view === v ? "active-btn" : "btn"
+                view === v.key ? "active-btn" : "btn"
               }`}
             >
-              {v}
+              {v.label}
             </button>
           ))}
         </div>
