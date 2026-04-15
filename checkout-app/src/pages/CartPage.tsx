@@ -5,12 +5,19 @@ import ProductModal from "../components/cart/ProductModal";
 import CartPanel from "../components/cart/CartPanel";
 import SidebarFilters from "../components/cart/SidebarFilters";
 import ThemeToggle from "../components/ui/ThemeToggle";
+import NotificationBell from "../components/ui/NotificationBell";
+import NotificationCenter from "../components/ui/NotificationCenter";
+import DevToggle from "../components/ui/DevToggle";
+import SimulationPanel from "../components/dev/SimulationPanel";
+import AnalyticsDashboard from "../components/dev/AnalyticsDashboard";
+import { useDevMode } from "../core/devMode";
 import { apiClient } from "../core/apiClient";
 import { useDebounce } from "../hooks/useDebounce";
 import imageLogo from "../assets/CartifyLogo.png";
 
 export default function CartPage() {
   const navigate = useNavigate();
+  const { enabled } = useDevMode();
 
   const [products, setProducts] = useState<any[]>([]);
   const [selected, setSelected] = useState<any | null>(null);
@@ -89,39 +96,30 @@ export default function CartPage() {
       <div className="sticky top-0 z-50 backdrop-blur bg-white/5 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-4">
 
-          {/* LOGO */}
-          <div
-            className="flex items-center cursor-pointer"
+          <img
+            src={imageLogo}
+            className="h-9 cursor-pointer hover:scale-105 transition"
             onClick={() => navigate("/")}
-          >
-            <img
-              src={imageLogo}
-              alt="Cartify Logo"
-              className="h-10 w-auto object-contain hover:scale-105 transition"
-            />
-          </div>
+          />
 
-          {/* SEARCH */}
-          <div className="flex-1">
-            <input
-              placeholder="Search products..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="input w-full"
-            />
-          </div>
+          <input
+            placeholder="Search products..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="input flex-1"
+          />
 
-          {/* THEME */}
-          <ThemeToggle />
+          <div className="flex items-center gap-3">
+            <DevToggle />
+            <NotificationBell />
+            <ThemeToggle />
+          </div>
         </div>
       </div>
 
-      {/* MAIN */}
-      <div className="max-w-7xl mx-auto p-6 space-y-6">
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="grid md:grid-cols-[260px_1fr_300px] gap-6">
 
-        <div className="grid md:grid-cols-[250px_1fr_300px] gap-6">
-
-          {/* SIDEBAR */}
           <SidebarFilters
             categories={categories}
             category={category}
@@ -136,26 +134,22 @@ export default function CartPage() {
             setView={setView}
           />
 
-          {/* PRODUCTS */}
           <div>
             <ProductGrid
               products={visibleProducts}
               view={view}
               onSelect={setSelected}
             />
-
             <div ref={loaderRef} className="text-center text-sm text-muted">
               Loading more...
             </div>
           </div>
 
-          {/* CART */}
-          <div className="sticky top-24 h-fit space-y-3">
+          <div className="sticky top-24 space-y-3">
             <CartPanel />
-
             <button
               onClick={() => navigate("/checkout")}
-              className="primary-btn w-full"
+              className="primary-btn"
             >
               Checkout
             </button>
@@ -163,7 +157,17 @@ export default function CartPage() {
         </div>
       </div>
 
-      {/* MODAL */}
+      <NotificationCenter />
+
+      {enabled && (
+        <>
+          <SimulationPanel />
+          <div className="fixed bottom-4 left-4 w-64 z-50">
+            <AnalyticsDashboard />
+          </div>
+        </>
+      )}
+
       {selected && (
         <ProductModal product={selected} onClose={() => setSelected(null)} />
       )}

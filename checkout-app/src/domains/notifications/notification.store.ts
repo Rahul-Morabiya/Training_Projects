@@ -1,38 +1,42 @@
 import { create } from "zustand";
-import type { Notification } from "../../types/notification";
+import { persist } from "zustand/middleware";
+import type { Notification, NotificationType } from "../../types/notification";
 
-const priorityMap: Record<string, number> = {
-  error: 3,
-  warning: 2,
-  info: 1,
-  success: 1,
-};
+interface NotificationStore {
+  list: Notification[];
+  add: (message: string, type: NotificationType) => void;
+  remove: (id: string) => void;
+  clear: () => void;
+}
 
-export const useNotificationStore = create<any>((set) => ({
-  list: [],
+export const useNotificationStore = create<NotificationStore>()(
+  persist(
+    (set) => ({
+      list: [],
 
-  add: (message: string, type: string) =>
-    set((state: any) => {
-      const exists = state.list.find((n: any) => n.message === message);
-      if (exists) return state;
+      add: (message, type) => {
+        set((state) => ({
+          list: [
+            {
+              id: Date.now().toString(),
+              message,
+              type,
+              createdAt: Date.now(),
+            },
+            ...state.list,
+          ],
+        }));
+      },
 
-      const updated = [
-        ...state.list,
-        {
-          id: Date.now().toString(),
-          message,
-          type,
-          createdAt: Date.now(),
-        },
-      ];
+      remove: (id) =>
+        set((state) => ({
+          list: state.list.filter((n) => n.id !== id),
+        })),
 
-      updated.sort((a, b) => priorityMap[b.type] - priorityMap[a.type]);
-
-      return { list: updated };
+      clear: () => set({ list: [] }),
     }),
-
-  remove: (id: string) =>
-    set((state: any) => ({
-      list: state.list.filter((n: any) => n.id !== id),
-    })),
-}));
+    {
+      name: "notification-store",
+    }
+  )
+);

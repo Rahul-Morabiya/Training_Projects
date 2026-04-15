@@ -1,8 +1,10 @@
 import { motion } from "framer-motion";
 import { useCartStore } from "../../domains/cart/cart.store";
+import { useNotificationStore } from "../../domains/notifications/notification.store";
 
 export default function ProductGrid({ products, view, onSelect }: any) {
   const add = useCartStore((s) => s.addItem);
+  const notify = useNotificationStore((s) => s.add);
 
   const layout =
     view === "grid"
@@ -39,7 +41,10 @@ export default function ProductGrid({ products, view, onSelect }: any) {
           </div>
 
           <button
-            onClick={() => add({ ...p, qty: 1, basePrice: p.price })}
+            onClick={() => {
+              add({ ...p, qty: 1, basePrice: p.price });
+              notify("Added to cart", "success");
+            }}
             className="primary-btn mt-2"
           >
             Add
