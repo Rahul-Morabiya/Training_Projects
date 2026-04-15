@@ -81,6 +81,8 @@ This repository contains all projects developed during my **Intuitive Internship
 - Responsive movie grid UI  
 
 ## Deliverable 7: ToDo Application 
+<img width="900" alt="image" src="https://github.com/user-attachments/assets/8d7b84ee-ba50-4f8c-afc9-a0f684edbc21" />
+
 **Features**
 - Add, toggle, delete, filter, clear completed tasks through an accessible input form
 - Persistent storage using LocalStorage
@@ -90,7 +92,18 @@ This repository contains all projects developed during my **Intuitive Internship
 - Modular TypeScript project structure
 - Unit testing with Jest (≥70% coverage)
 
-<img width="1895" height="992" alt="image" src="https://github.com/user-attachments/assets/8d7b84ee-ba50-4f8c-afc9-a0f684edbc21" />
 
 
+
+## Deliverable 8: Game Application
+<img width="900" alt="image" src="https://github.com/user-attachments/assets/f2d20266-e444-4499-b1b3-42c0d7c8875c" />
+
+**Features**
+
+- Built using React (Vite) with functional components
+- Component-based architecture (Button, Card, Board, Square, etc.)
+- State management using React Hooks (useState, useEffect)
+- Single Page Application (SPA) with dynamic UI updates
+- AI opponent with 3 difficulty levels: Easy, Medium and Hard
+- Persistent scoreboard using LocalStorage (wins, losses, draws)
 
