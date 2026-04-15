@@ -1,0 +1,82 @@
+@import "tailwindcss";
+* {
+  transition: all 0.2s ease;
+}
+/* BASE RESET */
+body {
+  margin: 0;
+  font-family: system-ui;
+}
+
+/* LIGHT */
+.theme-light {
+  --bg: #f5f7fb;
+  --card: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+}
+
+/* DARK */
+.theme-dark {
+  --bg: #0b0f1a;
+  --card: #111827;
+  --text: #ffffff;
+  --muted: #9ca3af;
+  --border: #1f2937;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.input {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.btn,
+.active-btn {
+  min-width: 80px;           /* 🔥 fixes shrinking */
+  text-align: center;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+/* inactive */
+.btn {
+  background: #e5e7eb;
+  color: black;
+}
+
+/* active */
+.active-btn {
+  background: #2563eb;
+  color: white;
+}
+
+.primary-btn {
+  background: #2563eb;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  width: 100%;
+}
+
+.text-muted {
+  color: var(--muted);
+}

@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 14;
 
 const ResourceListView = ({
   nodes,
