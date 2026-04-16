@@ -20,7 +20,14 @@ export default function SimulationPanel() {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-24 right-4 bg-white dark:bg-gray-900 shadow-xl p-3 text-xs rounded-xl z-[9999] w-52">
+    <div className="
+  fixed bottom-6 left-6 z-[9999]
+  w-72 rounded-xl p-4 transition-all
+  bg-[#1e293b]
+  text-white
+  border border-blue-500/20
+  shadow-lg
+">
 
       <div className="font-semibold mb-2">Simulation</div>
 

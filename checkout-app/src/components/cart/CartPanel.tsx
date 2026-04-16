@@ -60,20 +60,20 @@ export default function CartPanel() {
           {/* ACTIONS */}
           <div className="flex items-center gap-2">
             <button
-              onClick={() => decrement(String(item.id))}
-              className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded hover:scale-105"
-            >
-              −
-            </button>
+  onClick={() => decrement(String(item.id))}
+  className="w-8 h-8 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded hover:scale-105 hover:bg-blue-200 dark:hover:bg-blue-800 transition"
+>
+  −
+</button>
 
-            <span>{item.qty}</span>
+<span>{item.qty}</span>
 
-            <button
-              onClick={() => add(item)}
-              className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded hover:scale-105"
-            >
-              +
-            </button>
+<button
+  onClick={() => add(item)}
+  className="w-8 h-8 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded hover:scale-105 hover:bg-blue-200 dark:hover:bg-blue-800 transition"
+>
+  +
+</button>
 
             <button
               onClick={() => remove(String(item.id))}

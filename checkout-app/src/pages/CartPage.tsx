@@ -12,6 +12,7 @@ import AnalyticsDashboard from "../components/dev/AnalyticsDashboard";
 import { apiClient } from "../core/apiClient";
 import { useDebounce } from "../hooks/useDebounce";
 import imageLogo from "../assets/CartifyLogo.png";
+import DebugPanel from "../components/dev/DebugPanel";
 
 export default function CartPage() {
   const navigate = useNavigate();
@@ -205,7 +206,8 @@ export default function CartPage() {
 
       {/* 🔥 DEV PANELS (GLOBAL) */}
       <SimulationPanel />
-      <AnalyticsDashboard />
+<AnalyticsDashboard />
+<DebugPanel />
 
     </div>
   );

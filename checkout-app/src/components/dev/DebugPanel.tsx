@@ -1,48 +1,81 @@
-import { useNavigate } from "react-router-dom";
-import ProductList from "../../components/cart/ProductList";
-import CartPanel from "../../components/cart/CartPanel";
-import ThemeToggle from "../../components/ui/ThemeToggle";
+import { useEffect, useState } from "react";
+import { useCartStore } from "../../domains/cart/cart.store";
+import { useOrderStore } from "../../domains/order/order.store";
+import { getDevMode, subscribeDevMode } from "../../core/devMode";
 
-export default function CartPage() {
-  const navigate = useNavigate();
+export default function DebugPanel() {
+  const [visible, setVisible] = useState(getDevMode());
+
+  // Subscribe to dev mode toggle
+  useEffect(() => {
+    subscribeDevMode(setVisible);
+  }, []);
+
+  const cart = useCartStore();
+  const order = useOrderStore();
+
+  if (!visible) return null;
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-[#0B0F1A] text-gray-900 dark:text-white">
+    <div
+      className="
+  fixed bottom-[220px] right-6 z-[9999]
+  w-80 rounded-xl p-4
+  bg-[#1e293b]
+  text-white
+  border border-blue-500/20
+  shadow-2xl
+  text-xs
+"
+    >
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-3">
+        <div className="font-semibold text-sm">Debug Panel</div>
+        <div className="text-green-400 text-[10px]">DEV MODE</div>
+      </div>
 
-      <div className="max-w-7xl mx-auto p-6">
-
-        {/* HEADER */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-semibold">Cart</h1>
-          <ThemeToggle />
+      {/* CART DEBUG */}
+      <div className="mb-3">
+        <div className="font-medium mb-1 text-blue-300">Cart</div>
+        <div className="text-gray-300">
+          Items: {cart.itemIds.length}
         </div>
-
-        {/* MAIN GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-[1.6fr_1fr] gap-6">
-
-          {/* LEFT: PRODUCTS */}
-          <div className="bg-white dark:bg-[#111827] rounded-2xl shadow-sm p-4 h-[600px] overflow-hidden">
-            <ProductList />
-          </div>
-
-          {/* RIGHT: CART */}
-          <div className="space-y-4">
-
-            <div className="bg-white dark:bg-[#111827] rounded-2xl shadow-sm p-4">
-              <CartPanel />
-            </div>
-
-            {/* CTA */}
-            <button
-              onClick={() => navigate("/checkout")}
-              className="w-full bg-blue-600 hover:bg-blue-700 transition text-white py-3 rounded-xl font-medium shadow"
-            >
-              Proceed to Checkout
-            </button>
-
-          </div>
+        <div className="text-gray-300">
+          Version: {cart.version}
         </div>
+      </div>
 
+      {/* ORDER DEBUG */}
+      <div className="mb-3">
+        <div className="font-medium mb-1 text-purple-300">Order</div>
+        <div className="text-gray-300">
+          State: {order.state}
+        </div>
+        <div className="text-gray-300">
+          Current ID: {order.currentOrderId || "None"}
+        </div>
+      </div>
+
+      {/* SIMULATION STATUS */}
+      <div className="mb-3">
+        <div className="font-medium mb-1 text-yellow-300">Simulation</div>
+        <div className="text-gray-300">
+          Fail: {(window as any).__SIM__?.fail ? "ON" : "OFF"}
+        </div>
+        <div className="text-gray-300">
+          Slow: {(window as any).__SIM__?.slow ? "ON" : "OFF"}
+        </div>
+      </div>
+
+      {/* SYSTEM INFO */}
+      <div>
+        <div className="font-medium mb-1 text-green-300">System</div>
+        <div className="text-gray-300">
+          Online: {navigator.onLine ? "YES" : "NO"}
+        </div>
+        <div className="text-gray-300">
+          Time: {new Date().toLocaleTimeString()}
+        </div>
       </div>
     </div>
   );

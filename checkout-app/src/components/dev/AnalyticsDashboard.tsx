@@ -5,7 +5,7 @@ import { getDevMode, subscribeDevMode } from "../../core/devMode";
 export default function AnalyticsDashboard() {
   const [visible, setVisible] = useState(getDevMode());
   const [data, setData] = useState(analytics.get());
-
+const isDark = document.documentElement.classList.contains("dark");
   useEffect(() => {
     subscribeDevMode(setVisible);
   }, []);
@@ -27,7 +27,14 @@ export default function AnalyticsDashboard() {
   const fail = data.filter((d) => d.event === "ORDER_FAILED").length;
 
   return (
-    <div className="fixed bottom-4 left-4 bg-white dark:bg-gray-900 rounded-xl p-4 shadow-xl text-xs z-[9999] w-64">
+    <div className="
+  fixed bottom-6 right-6 z-[9999]
+  w-72 rounded-xl p-4
+  bg-[#1e293b]
+  text-white
+  border border-blue-500/20
+  shadow-lg
+">
 
       <h2 className="font-semibold mb-2">Analytics</h2>
 
