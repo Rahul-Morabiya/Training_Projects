@@ -3,7 +3,9 @@ import Toast from "./Toast";
 import type { Notification } from "../../types/notification";
 
 export default function NotificationCenter() {
-  const { list, remove } = useNotificationStore();
+  // ✅ FIX: selector-based
+  const list = useNotificationStore((s) => s.list);
+  const remove = useNotificationStore((s) => s.remove);
 
   return (
     <div className="fixed top-4 right-4 space-y-2 z-50">

@@ -11,21 +11,22 @@ interface NotificationStore {
 
 export const useNotificationStore = create<NotificationStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       list: [],
 
       add: (message, type) => {
-        set((state) => ({
-          list: [
-            {
-              id: Date.now().toString(),
-              message,
-              type,
-              createdAt: Date.now(),
-            },
-            ...state.list,
-          ],
-        }));
+        const newItem: Notification = {
+          id: Date.now().toString(),
+          message,
+          type,
+          createdAt: Date.now(),
+        };
+
+        const updated = [newItem, ...get().list];
+
+        console.log("🔔 Notification added:", newItem); // ✅ DEBUG
+
+        set({ list: updated });
       },
 
       remove: (id) =>

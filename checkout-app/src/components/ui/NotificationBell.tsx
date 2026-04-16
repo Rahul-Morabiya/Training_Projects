@@ -3,6 +3,7 @@ import { useNotificationStore } from "../../domains/notifications/notification.s
 import type { Notification } from "../../types/notification";
 
 export default function NotificationBell() {
+  // ✅ FIX: use selectors (NOT destructuring whole store)
   const list = useNotificationStore((s) => s.list);
   const remove = useNotificationStore((s) => s.remove);
 
@@ -18,7 +19,7 @@ export default function NotificationBell() {
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="relative text-xl hover:scale-110 transition"
+        className="relative text-xl"
       >
         🔔
         {list.length > 0 && (
@@ -31,6 +32,7 @@ export default function NotificationBell() {
       {open && (
         <div className="absolute right-0 mt-2 w-72 card z-50 space-y-3">
 
+          {/* FILTERS */}
           <div className="flex gap-2 text-xs">
             {["all", "success", "error", "warning", "info"].map((f) => (
               <button
@@ -45,9 +47,10 @@ export default function NotificationBell() {
             ))}
           </div>
 
+          {/* LIST */}
           <div className="max-h-60 overflow-auto space-y-2">
             {filtered.length === 0 && (
-              <div className="text-sm text-muted text-center">
+              <div className="text-sm text-muted text-center py-4">
                 No notifications
               </div>
             )}
