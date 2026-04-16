@@ -1,11 +1,14 @@
-import { create } from "zustand";
+let devMode = false;
 
-interface DevState {
-  enabled: boolean;
-  toggle: () => void;
-}
+const listeners: Function[] = [];
 
-export const useDevMode = create<DevState>((set) => ({
-  enabled: false,
-  toggle: () => set((s) => ({ enabled: !s.enabled })),
-}));
+export const getDevMode = () => devMode;
+
+export const toggleDevMode = () => {
+  devMode = !devMode;
+  listeners.forEach((l) => l(devMode));
+};
+
+export const subscribeDevMode = (cb: (v: boolean) => void) => {
+  listeners.push(cb);
+};

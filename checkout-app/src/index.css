@@ -1,14 +1,15 @@
 @import "tailwindcss";
+
 html {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
-/* BASE RESET */
+
 body {
   margin: 0;
   font-family: system-ui;
 }
 
-/* LIGHT */
+/* THEMES */
 .theme-light {
   --bg: #f5f7fb;
   --card: #ffffff;
@@ -17,7 +18,6 @@ body {
   --border: #e5e7eb;
 }
 
-/* DARK */
 .theme-dark {
   --bg: #0b0f1a;
   --card: #111827;
@@ -31,101 +31,105 @@ body {
   color: var(--text);
 }
 
+/* NAVBAR */
+.navbar-glass {
+  background: rgba(17, 24, 39, 0.7);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  z-index: 1;
+}
+
+/* CARD */
 .card {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px;
+  border-radius: 16px;
+  padding: 14px;
+  transition: all 0.25s ease;
 }
 
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+/* INPUT */
 .input {
   background: var(--card);
   border: 1px solid var(--border);
   color: var(--text);
-  padding: 8px;
-  border-radius: 8px;
-  width: 100%;
-}
-
-.btn,
-.active-btn {
-  min-width: 50px;           /* 🔥 fixes shrinking */
-  text-align: center;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 14px;
-  transition: all 0.2s ease;
-}
-
-/* inactive */
-.btn {
-  background: #e5e7eb;
-  color: black;
-}
-
-/* active */
-.active-btn {
-  background: #2563eb;
-  color: white;
-}
-
-.primary-btn {
-  background: #2563eb;
-  color: white;
   padding: 10px;
   border-radius: 10px;
   width: 100%;
 }
 
+.input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+}
+
+/* BUTTONS */
+.primary-btn {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: white;
+  padding: 12px;
+  border-radius: 12px;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.primary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+}
+
+/* VIEW BUTTONS */
+.btn {
+  background: #e5e7eb;
+  color: black;
+  padding: 6px 12px;
+  border-radius: 8px;
+  flex: 1;
+}
+
+.active-btn {
+  background: #2563eb;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  flex: 1;
+}
+
+/* SIDEBAR */
+.sidebar-section {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  z-index: 0;
+}
+
+/* PRODUCT IMAGE */
+.product-img {
+  transition: transform 0.3s ease;
+}
+
+.card:hover .product-img {
+  transform: scale(1.05);
+}
+
+/* CART */
+.cart-item {
+  padding: 10px;
+  border-radius: 10px;
+  transition: background 0.2s ease;
+}
+
+.cart-item:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: #3b82f6;
+}
+
+/* TEXT */
 .text-muted {
   color: var(--muted);
-}
-
-/* THEME TOGGLE BUTTON */
-.theme-toggle {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: var(--card);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 16px;
-}
-
-.theme-toggle:hover {
-  transform: scale(1.05);
-  background: rgba(0, 0, 0, 0.05);
-}
-
-.theme-dark .theme-toggle:hover {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-/* 🔥 GLOBAL HOVER POLISH */
-
-.card {
-  transition: all 0.2s ease;
-}
-
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-}
-
-button {
-  transition: all 0.2s ease;
-}
-
-button:hover {
-  transform: scale(1.03);
-}
-
-input:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
 }

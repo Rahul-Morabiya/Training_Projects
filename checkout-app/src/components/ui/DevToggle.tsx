@@ -1,13 +1,24 @@
-import { useDevMode } from "../../core/devMode";
+import { useEffect, useState } from "react";
+import {
+  getDevMode,
+  toggleDevMode,
+  subscribeDevMode,
+} from "../../core/devMode";
 
 export default function DevToggle() {
-  const { enabled, toggle } = useDevMode();
+  const [enabled, setEnabled] = useState(getDevMode());
+
+  useEffect(() => {
+    subscribeDevMode(setEnabled);
+  }, []);
 
   return (
     <button
-      onClick={toggle}
-      className={`px-2 py-1 text-xs rounded border ${
-        enabled ? "bg-green-600 text-white" : "bg-gray-200"
+      onClick={toggleDevMode}
+      className={`px-3 py-1 rounded text-xs font-medium transition ${
+        enabled
+          ? "bg-green-600 text-white"
+          : "bg-gray-300 text-black"
       }`}
     >
       DEV

@@ -4,6 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useNotificationStore } from "../../domains/notifications/notification.store";
 import { analytics } from "../../core/analytics";
+import {
+  isCheckoutLocked,
+  setCheckoutLock,
+  clearCheckoutLock,
+} from "../../core/checkoutLock";
+import { getTabId } from "../../core/tabId";
 
 export default function Checkout() {
   const cart = useCartStore();
@@ -32,27 +38,28 @@ export default function Checkout() {
   );
 
   const validate = () => {
-    const newErrors: any = {};
-
-    if (!form.name.trim()) newErrors.name = "Required";
-    if (!form.address.trim()) newErrors.address = "Required";
-    if (!form.city.trim()) newErrors.city = "Required";
-    if (!/^\d{5,6}$/.test(form.zip)) newErrors.zip = "Invalid ZIP";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    const e: any = {};
+    if (!form.name.trim()) e.name = "Required";
+    if (!form.address.trim()) e.address = "Required";
+    if (!form.city.trim()) e.city = "Required";
+    if (!/^\d{5,6}$/.test(form.zip)) e.zip = "Invalid ZIP";
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
 
   const handleCheckout = async () => {
-    if (!navigator.onLine) {
-      notify("You are offline", "error");
-      setState("ORDER_FAILED");
-      return;
-    }
+    const lock = localStorage.getItem("checkout-lock");
 
-    const sim = (window as any).__SIM__;
-    if (sim?.fail) {
-      notify("Simulated failure", "error");
+    if (lock) {
+  const parsed = JSON.parse(lock);
+  if (parsed.owner !== getTabId()) {
+    notify("Another tab is processing checkout", "error");
+    return;
+  }
+}
+
+    if (!navigator.onLine) {
+      notify("Offline", "error");
       setState("ORDER_FAILED");
       return;
     }
@@ -68,8 +75,7 @@ export default function Checkout() {
       return;
     }
 
-    if (loading) return;
-    setLoading(true);
+    setCheckoutLock(); // 🔒 lock start
 
     try {
       setState("CHECKOUT_VALIDATED");
@@ -88,15 +94,11 @@ export default function Checkout() {
       });
 
       setCurrent(orderId);
-
       setState("ORDER_SUCCESS");
 
       analytics.track("ORDER_SUCCESS");
 
-      useCartStore.setState({
-        itemsById: {},
-        itemIds: [],
-      });
+      useCartStore.setState({ itemsById: {}, itemIds: [] });
 
       notify("Order placed!", "success");
 
@@ -105,6 +107,7 @@ export default function Checkout() {
       setState("ORDER_FAILED");
       notify("Order failed", "error");
     } finally {
+      clearCheckoutLock(); // 🔓 unlock
       setLoading(false);
     }
   };
@@ -112,59 +115,42 @@ export default function Checkout() {
   return (
     <div className="space-y-4">
 
-      {/* 🧾 REVIEW WITH IMAGES */}
-      <div className="space-y-2">
-        {items.map((item: any) => (
-          <div key={item.id} className="flex items-center gap-3 text-sm">
-            <img src={item.image} className="w-10 h-10 object-contain" />
-            <div className="flex-1">{item.title}</div>
-            <div>x{item.qty}</div>
-          </div>
-        ))}
-      </div>
+      <h2 className="font-semibold text-sm text-muted">
+        Shipping Details
+      </h2>
 
-      <div className="font-semibold">Total: ₹{total.toFixed(2)}</div>
+      {items.map((item: any) => (
+        <div key={item.id} className="flex gap-2 text-sm">
+          <img src={item.image} className="w-10 h-10" />
+          <span>{item.title}</span>
+        </div>
+      ))}
 
-      {/* 📦 FORM */}
-      <div className="font-bold ">Enter your Shipping Details</div>
-      <input
-        placeholder="Name"
-        className="input"
+      <div>Total: ₹{total}</div>
+
+      <input className="input" placeholder="Name"
         value={form.name}
         onChange={(e) => setForm({ ...form, name: e.target.value })}
       />
       {errors.name && <div className="text-red-500 text-xs">{errors.name}</div>}
 
-      <input
-        placeholder="Address"
-        className="input"
+      <input className="input" placeholder="Address"
         value={form.address}
         onChange={(e) => setForm({ ...form, address: e.target.value })}
       />
-      {errors.address && <div className="text-red-500 text-xs">{errors.address}</div>}
 
-      <input
-        placeholder="City"
-        className="input"
+      <input className="input" placeholder="City"
         value={form.city}
         onChange={(e) => setForm({ ...form, city: e.target.value })}
       />
-      {errors.city && <div className="text-red-500 text-xs">{errors.city}</div>}
 
-      <input
-        placeholder="ZIP"
-        className="input"
+      <input className="input" placeholder="ZIP"
         value={form.zip}
         onChange={(e) => setForm({ ...form, zip: e.target.value })}
       />
-      {errors.zip && <div className="text-red-500 text-xs">{errors.zip}</div>}
 
-      <button
-        onClick={handleCheckout}
-        disabled={loading}
-        className="primary-btn"
-      >
-        {loading ? "Processing..." : "Place Order"}
+      <button onClick={handleCheckout} className="primary-btn">
+        Place Order
       </button>
     </div>
   );

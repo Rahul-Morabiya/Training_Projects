@@ -5,6 +5,9 @@ import CartPage from "../pages/CartPage";
 import OrderPage from "../pages/OrderPage";
 import { OfflineBanner } from "../components/ui/OfflineBanner";
 import NotificationCenter from "../components/ui/NotificationCenter"; // ✅ ADD
+import ProductDetailPage from "../pages/ProductDetailPage";
+import PaymentPage from "../pages/PaymentPage";
+import TrackingPage from "../pages/TrackingPage";
 
 export default function App() {
   const location = useLocation();
@@ -27,6 +30,9 @@ export default function App() {
             <Route path="/" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/order" element={<OrderPage />} />
+            <Route path="/product/:id" element={<ProductDetailPage />} />
+            <Route path="/payment" element={<PaymentPage />} />
+            <Route path="/tracking" element={<TrackingPage />} />
           </Routes>
         </motion.div>
       </AnimatePresence>

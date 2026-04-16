@@ -1,18 +1,16 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { isCheckoutLocked } from "../../core/checkoutLock";
+import { useNotificationStore } from "../notifications/notification.store";
 import type { CartItem } from "../../types/cart";
 
-/**
- * ✅ Unicode-safe checksum (NO btoa)
- */
 const generateChecksum = (items: Record<string, CartItem>) => {
-  return JSON.stringify(items); // simple + safe
+  return JSON.stringify(items);
 };
 
 interface CartState {
   itemsById: Record<string, CartItem>;
   itemIds: string[];
-
   checksum: string;
   version: number;
 
@@ -28,11 +26,17 @@ export const useCartStore = create<CartState>()(
     (set, get) => ({
       itemsById: {},
       itemIds: [],
-
       checksum: "",
       version: 1,
 
       addItem: (item) => {
+        if (isCheckoutLocked()) {
+  useNotificationStore
+    .getState()
+    .add("Blocked: checkout in another tab", "warning");
+  return;
+}
+
         set((state) => {
           const id = String(item.id);
           const existing = state.itemsById[id];
@@ -54,6 +58,13 @@ export const useCartStore = create<CartState>()(
       },
 
       removeItem: (id) => {
+        if (isCheckoutLocked()) {
+  useNotificationStore
+    .getState()
+    .add("Blocked: checkout in another tab", "warning");
+  return;
+}
+
         set((state) => {
           const newItems = { ...state.itemsById };
           delete newItems[id];
@@ -68,6 +79,13 @@ export const useCartStore = create<CartState>()(
       },
 
       decrementItem: (id) => {
+        if (isCheckoutLocked()) {
+  useNotificationStore
+    .getState()
+    .add("Blocked: checkout in another tab", "warning");
+  return;
+}
+
         set((state) => {
           const item = state.itemsById[id];
           if (!item) return state;

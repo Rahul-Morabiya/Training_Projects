@@ -1,11 +1,13 @@
 import { useState, useMemo } from "react";
 import { useCartStore } from "../../domains/cart/cart.store";
 import Checkout from "./Checkout";
+import { useNavigate } from "react-router-dom";
 
 const steps = ["Review", "Validate", "Confirm"];
 
 export default function CheckoutStepper() {
   const [step, setStep] = useState(0);
+  const navigate = useNavigate(); // ✅ add this
 
   const itemsById = useCartStore((s) => s.itemsById);
   const itemIds = useCartStore((s) => s.itemIds);
@@ -47,47 +49,72 @@ export default function CheckoutStepper() {
       {/* STEP CONTENT */}
 
       {step === 0 && (
-        <div className="space-y-3">
-          {items.map((item: any) => (
-            <div key={item.id} className="flex justify-between text-sm">
-              <span>{item.title}</span>
-              <span>x{item.qty}</span>
-            </div>
-          ))}
+  <div className="space-y-4">
 
-          <div className="font-semibold">
-            Total: ₹{total.toFixed(2)}
+    {items.map((item: any) => (
+      <div key={item.id} className="flex items-center gap-3">
+
+        <img
+          src={item.image}
+          className="w-12 h-12 object-contain bg-white rounded"
+        />
+
+        <div className="flex-1">
+          <div className="text-sm">{item.title}</div>
+          <div className="text-xs text-muted">
+            ₹{item.price} × {item.qty}
           </div>
-
-          <button
-            onClick={() => setStep(1)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg"
-          >
-            Continue
-          </button>
         </div>
-      )}
+
+        <div className="font-semibold">
+          ₹{(item.price * item.qty).toFixed(2)}
+        </div>
+
+      </div>
+    ))}
+
+    <div className="text-xl font-bold">
+      Total: ₹{total.toFixed(2)}
+    </div>
+
+    {/* ONLY CTA */}
+    <button
+      onClick={() => setStep(1)}
+      className="primary-btn"
+    >
+      Continue to Validation
+    </button>
+  </div>
+)}
 
       {step === 1 && (
-        <div className="space-y-3">
-          <p className="text-sm text-gray-500">
-            Validating prices, availability, and cart integrity...
-          </p>
+  <div className="space-y-4">
 
-          <div className="text-xs text-green-500">
-            ✔ Cart validated successfully
-          </div>
+    <div className="text-sm text-muted">
+      Validating cart integrity, pricing and stock...
+    </div>
 
-          <button
-            onClick={() => setStep(2)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg"
-          >
-            Proceed
-          </button>
-        </div>
-      )}
+    <div className="text-green-500 text-sm">
+      ✔ Everything looks good
+    </div>
 
-      {step === 2 && <Checkout />}
+    <button
+      onClick={() => setStep(2)}
+      className="primary-btn"
+    >
+      Continue to Payment
+    </button>
+  </div>
+)}
+
+      {step === 2 && (
+  <button
+    onClick={() => navigate("/payment")}
+    className="primary-btn"
+  >
+    Go to Payment
+  </button>
+)}
     </div>
   );
 }

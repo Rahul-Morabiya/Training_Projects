@@ -14,13 +14,10 @@ export default function NotificationBell() {
     if (filter === "all") return list;
     return list.filter((n: Notification) => n.type === filter);
   }, [list, filter]);
-
+  const add = useNotificationStore((s) => s.add);
   return (
     <div className="relative">
-      <button
-        onClick={() => setOpen(!open)}
-        className="relative text-xl"
-      >
+      <button onClick={() => setOpen(!open)} className="relative text-xl">
         🔔
         {list.length > 0 && (
           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs px-1 rounded-full">
@@ -31,7 +28,6 @@ export default function NotificationBell() {
 
       {open && (
         <div className="absolute right-0 mt-2 w-72 card z-50 space-y-3">
-
           {/* FILTERS */}
           <div className="flex gap-2 text-xs">
             {["all", "success", "error", "warning", "info"].map((f) => (
@@ -45,6 +41,12 @@ export default function NotificationBell() {
                 {f}
               </button>
             ))}
+            <button
+              onClick={() => add("Test Notification", "info")}
+              className="text-xs bg-blue-500 text-white px-2 py-1 rounded"
+            >
+              Test Notification
+            </button>
           </div>
 
           {/* LIST */}

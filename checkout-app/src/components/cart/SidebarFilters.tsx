@@ -10,86 +10,93 @@ export default function SidebarFilters({
   setInStock,
   view,
   setView,
+  sort,
+  setSort,
 }: any) {
-  const views = [
-    { key: "grid", label: "Grid" },
-    { key: "compact", label: "Compact" },
-    { key: "list", label: "List" },
-  ];
+  const views = ["grid", "compact", "list"];
 
   return (
-    <div className="card space-y-5">
+    <div className="card space-y-5 sticky top-24">
 
-      {/* VIEW SWITCH */}
-      <div>
-        <div className="text-sm mb-2 font-medium">View</div>
-
+      {/* VIEW */}
+      <div className="sidebar-section">
+        <div className="font-semibold mb-2">View</div>
         <div className="flex gap-2">
           {views.map((v) => (
             <button
-              key={v.key}
-              onClick={() => setView(v.key)}   // ✅ FIXED
-              className={`flex-1 ${
-                view === v.key ? "active-btn" : "btn"
+              key={v}
+              onClick={() => setView(v)}
+              className={`${
+                view === v ? "active-btn" : "btn"
               }`}
             >
-              {v.label}
+              {v}
             </button>
           ))}
         </div>
       </div>
 
-      <div className="border-t border-white/10" />
+      {/* SORT */}
+      <div className="sidebar-section">
+        <div className="font-semibold mb-2">Sort By</div>
+        <select
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+          className="input"
+        >
+          <option value="default">Default</option>
+          <option value="price_low">Price Low → High</option>
+          <option value="price_high">Price High → Low</option>
+          <option value="rating">Rating</option>
+          <option value="name">Name</option>
+        </select>
+      </div>
 
       {/* FILTERS */}
-      <h2 className="font-semibold">Filters</h2>
-
       <div>
-        <div className="text-sm mb-1">Category</div>
+        <div className="font-semibold mb-2">Filters</div>
+
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="input"
+          className="input mb-2"
         >
           {categories.map((c: string) => (
             <option key={c}>{c}</option>
           ))}
         </select>
-      </div>
 
-      <div>
-        <div className="text-sm">Max Price: ₹{price}</div>
+        <div className="text-sm mb-1">
+          Max Price: ₹{price}
+        </div>
+
         <input
           type="range"
           min="0"
           max="1000"
           value={price}
           onChange={(e) => setPrice(Number(e.target.value))}
-          className="w-full"
         />
-      </div>
 
-      <div>
-        <div className="text-sm mb-1">Rating</div>
         <select
           value={rating}
           onChange={(e) => setRating(Number(e.target.value))}
-          className="input"
+          className="input mt-2"
         >
           <option value={0}>All</option>
-          <option value={3}>3★ & above</option>
-          <option value={4}>4★ & above</option>
+          <option value={3}>3★+</option>
+          <option value={4}>4★+</option>
         </select>
-      </div>
 
-      <label className="flex items-center gap-2 text-sm">
-        <input
-          type="checkbox"
-          checked={inStock}
-          onChange={() => setInStock(!inStock)}
-        />
-        In Stock Only
-      </label>
+        <label className="flex items-center gap-2 mt-2 text-sm">
+          <input
+            type="checkbox"
+            checked={inStock}
+            onChange={() => setInStock(!inStock)}
+          />
+          In Stock Only
+        </label>
+      </div>
     </div>
   );
 }
