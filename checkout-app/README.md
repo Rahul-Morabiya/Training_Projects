@@ -1,73 +1,188 @@
-# React + TypeScript + Vite
+# 🚀 Cartify — Frontend Checkout System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Images
+1) Home Page
+<img width="1895" height="990" alt="image" src="https://github.com/user-attachments/assets/d3a52ed3-f86b-48c5-a4ea-b579b58d0479" />
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## React Compiler
+2) Dev Panel (Simulation , Analytics and Debug in Light Theme)
+<img width="1895" height="998" alt="image" src="https://github.com/user-attachments/assets/efb2b260-a23e-4851-a8c4-bc677b25e081" />
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+3) Checkout Page
+<img width="1919" height="991" alt="image" src="https://github.com/user-attachments/assets/d680b751-b7b4-4a9a-bfa0-cb8b38613c59" />
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+4) Payment Page
+<img width="1919" height="998" alt="image" src="https://github.com/user-attachments/assets/0d0fe29b-103e-4589-a092-d4b6e06b3db0" />
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+
+5) Order Timeline and Status Page
+<img width="1919" height="992" alt="image" src="https://github.com/user-attachments/assets/1efb735d-58c1-42f1-9233-ac4cb5bd571a" />
+
+
+---
+
+## ✨ Features
+
+* 🛍️ Product browsing with filters, sorting & search
+* ⚡ Infinite scrolling + virtualization
+* 🧠 Optimized cart with normalized state
+* 🔐 Multi-tab checkout locking system
+* 💳 Full checkout + payment simulation
+* 📦 Order tracking with live progress
+* 🔔 Global notification system
+* 📊 Analytics dashboard (dev mode)
+* 🧪 Simulation engine (failures & latency)
+* 🧰 Debug panel for internal state inspection
+
+---
+
+## 🏗️ Architecture
+
+```
+UI Layer (React Components)
+↓
+Domain Layer (Zustand Stores)
+↓
+Core Layer (Infrastructure)
+↓
+Browser Runtime (Storage, Events, Network)
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 📁 Project Structure
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+src/
+├── app/                # App entry + routing
+├── components/         # UI components
+├── pages/              # Page-level components
+├── domains/            # Business logic (stores)
+├── core/               # Infrastructure layer
+├── hooks/              # Custom hooks
+├── utils/              # Utility functions
+├── types/              # Type definitions
+```
+
+---
+
+## 🧠 Core Concepts
+
+### 1. Normalized State
+
+Cart uses:
+
+```
+itemsById + itemIds
+```
+
+→ O(1) access & performance optimization
+
+---
+
+### 2. Checkout Locking System
+
+* Uses `localStorage` + `BroadcastChannel`
+* Prevents multi-tab conflicts
+
+---
+
+### 3. State Machine (Orders)
+
+```
+CART_READY
+→ CHECKOUT_VALIDATED
+→ ORDER_SUBMITTED
+→ ORDER_SUCCESS / ORDER_FAILED
+```
+
+---
+
+### 4. Simulation Engine
+
+Global runtime:
+
+```
+window.__SIM__ = {
+  fail: boolean,
+  slow: boolean
+}
+```
+
+Used to simulate:
+
+* API failures
+* Slow network
+
+---
+
+### 5. Analytics System
+
+Tracks events:
+
+```
+ORDER_SUCCESS
+ORDER_FAILED
+```
+
+---
+
+## ⚙️ Tech Stack
+
+* React (Vite)
+* TypeScript
+* Zustand (state management)
+* TailwindCSS
+* Framer Motion
+* Axios
+* TanStack Virtual
+
+---
+
+## 🚀 Getting Started
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Run development server
+
+```bash
+npm run dev
+```
+
+### 3. Open in browser
+
+```
+http://localhost:5173
+```
+
+---
+
+## 🧪 Dev Mode
+
+Toggle Dev Mode to access:
+
+* 📊 Analytics Dashboard
+* 🧰 Debug Panel
+* 🧪 Simulation Panel
+
+---
+
+## 🔥 Key Highlights
+
+* No backend required
+* Handles edge cases like:
+
+  * multi-tab conflicts
+  * offline mode
+  * retry logic
+* Production-inspired architecture
+
+
