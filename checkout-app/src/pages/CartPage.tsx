@@ -9,10 +9,10 @@ import NotificationBell from "../components/ui/NotificationBell";
 import DevToggle from "../components/ui/DevToggle";
 import SimulationPanel from "../components/dev/SimulationPanel";
 import AnalyticsDashboard from "../components/dev/AnalyticsDashboard";
+import DebugPanel from "../components/dev/DebugPanel";
 import { apiClient } from "../core/apiClient";
 import { useDebounce } from "../hooks/useDebounce";
 import imageLogo from "../assets/CartifyLogo.png";
-import DebugPanel from "../components/dev/DebugPanel";
 
 export default function CartPage() {
   const navigate = useNavigate();
@@ -38,15 +38,44 @@ export default function CartPage() {
    * FETCH PRODUCTS
    */
   useEffect(() => {
-    apiClient("https://fakestoreapi.com/products").then((data: any[]) => {
-      const enhanced = data.map((p) => ({
-        ...p,
-        rating: Number((Math.random() * 2 + 3).toFixed(1)),
-        inventory: Math.floor(Math.random() * 10) + 1,
-      }));
-      setProducts(enhanced);
-    });
-  }, []);
+  apiClient("https://fakestoreapi.com/products").then((data: any[]) => {
+
+    // 🔥 helper: deterministic pseudo-random based on id
+    const seeded = (id: number | string) => {
+      let hash = 0;
+      const str = String(id);
+      for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      return Math.abs(hash);
+    };
+
+    // 🔥 EXPAND DATASET
+    const expanded = Array.from({ length: 30 }, (_, i) =>
+      data.map((p) => {
+        const uniqueId = `${p.id}-${i}`;
+        const seed = seeded(uniqueId);
+
+        return {
+          ...p,
+          id: uniqueId,
+
+          // ✅ STABLE VALUES (NO RANDOM AFTER RENDER)
+          rating: Number((3 + (seed % 20) / 10).toFixed(1)), // 3.0 - 5.0
+          inventory: (seed % 10) + 1, // 1 - 10
+        };
+      })
+    ).flat();
+
+    setProducts(expanded);
+  });
+}, []);
+  /**
+   * RESET SCROLL WHEN FILTERS CHANGE 🔥
+   */
+  useEffect(() => {
+    setVisibleCount(12);
+  }, [category, price, rating, inStock, debouncedSearch, sort]);
 
   /**
    * CATEGORIES
@@ -90,41 +119,54 @@ export default function CartPage() {
   }, [filtered, sort]);
 
   /**
-   * PAGINATION (INFINITE SCROLL)
+   * PAGINATION
    */
   const visibleProducts = useMemo(() => {
     return sorted.slice(0, visibleCount);
   }, [sorted, visibleCount]);
 
+  /**
+   * 🔥 FIXED INFINITE SCROLL
+   */
   useEffect(() => {
+    const el = loaderRef.current;
+    if (!el) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
+        if (
+          entries[0].isIntersecting &&
+          visibleCount < sorted.length
+        ) {
           setVisibleCount((prev) => prev + 8);
         }
       },
-      { threshold: 1 }
+      {
+        threshold: 0,               // 🔥 FIX
+        rootMargin: "200px",        // 🔥 PRELOAD BEFORE END
+      }
     );
 
-    if (loaderRef.current) observer.observe(loaderRef.current);
-    return () => observer.disconnect();
-  }, []);
+    observer.observe(el);
+
+    return () => {
+      observer.unobserve(el);
+    };
+  }, [visibleCount, sorted.length]);
 
   return (
     <div className="min-h-screen">
 
-      {/* 🔥 NAVBAR */}
+      {/* NAVBAR */}
       <div className="sticky top-0 z-50 navbar-glass">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-4">
 
-          {/* LOGO */}
           <img
             src={imageLogo}
             className="h-9 cursor-pointer hover:scale-110 transition"
             onClick={() => navigate("/")}
           />
 
-          {/* SEARCH */}
           <input
             placeholder="Search for products..."
             value={search}
@@ -132,7 +174,6 @@ export default function CartPage() {
             className="input flex-1"
           />
 
-          {/* RIGHT CONTROLS */}
           <div className="flex items-center gap-3">
             <DevToggle />
             <NotificationBell />
@@ -141,7 +182,7 @@ export default function CartPage() {
         </div>
       </div>
 
-      {/* 🔥 MAIN */}
+      {/* MAIN */}
       <div className="max-w-7xl mx-auto p-6">
 
         <div className="grid md:grid-cols-[240px_1fr_280px] gap-6">
@@ -173,15 +214,18 @@ export default function CartPage() {
               onSelect={setSelected}
             />
 
+            {/* LOADER */}
             <div
               ref={loaderRef}
-              className="text-center text-muted py-4"
+              className="text-center text-muted py-6"
             >
-              Loading more...
+              {visibleCount < sorted.length
+                ? "Loading more..."
+                : "No more products"}
             </div>
           </div>
 
-          {/* CART PANEL */}
+          {/* CART */}
           <div className="sticky top-24 space-y-3">
             <CartPanel />
 
@@ -204,11 +248,10 @@ export default function CartPage() {
         />
       )}
 
-      {/* 🔥 DEV PANELS (GLOBAL) */}
+      {/* DEV PANELS */}
       <SimulationPanel />
-<AnalyticsDashboard />
-<DebugPanel />
-
+      <AnalyticsDashboard />
+      <DebugPanel />
     </div>
   );
 }
